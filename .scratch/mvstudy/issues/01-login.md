@@ -6,9 +6,15 @@
 
 **Blocked by:** None — can start immediately
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] 在新 PostgreSQL 16 数据库执行 alembic upgrade head，植入两班样例；正确口令返回凭证，U2 的授权来自数据库。
-- [ ] 错误口令返回 401；学生查询他班名册得 404。刷新后仍是原身份。
-- [ ] 第二次升到 head 后原用户仍可登录；测试走同一套迁移。
-- [ ] 登录行为放在 `platform` 域；Flask 宿主只注册 Blueprint。用应用工厂生成的 URL 映射做集成检查：每对 HTTP 方法与路径只由一个处理器提供，后续注册新域时沿用此检查。
+- [x] 在新 PostgreSQL 16 数据库执行 alembic upgrade head，植入两班样例；正确口令返回凭证，U2 的授权来自数据库。
+- [x] 错误口令返回 401；学生查询他班名册得 404。刷新后仍是原身份。
+- [x] 第二次升到 head 后原用户仍可登录；测试走同一套迁移。
+- [x] 登录行为放在 `platform` 域；Flask 宿主只注册 Blueprint。用应用工厂生成的 URL 映射做集成检查：每对 HTTP 方法与路径只由一个处理器提供，后续注册新域时沿用此检查。
+
+**验收证据：** 本地分支 `feat/task-01-login`，实现 `4e0c533`。迁移 `migrations/versions/0001_platform_identity.py`（`roles`/`classes`/`users`/`class_members`，无 `create_all`）。`python -W ignore -m unittest discover -s tests`：14 passed；`python -m unittest discover -s backend/mvstudy/domains/platform -t backend`：6 passed；`python tools/check_layout.py`：项目结构检查通过。全部测试经 `command.upgrade(config, "head")` 对隔离库 `mvstudy_test` 建表后运行。
+
+四条验收的对应测试：`test_login_issues_token_and_me_reads_database`（凭证签发、U2 直读数据库：改库后同一 token 立即生效）、`test_second_upgrade_keeps_existing_accounts`（二次 upgrade 后原用户仍可登录）、`test_wrong_password_and_missing_credentials` 与 `test_student_cannot_read_other_class_roster`（401/404）、`test_each_method_and_path_has_one_handler`（URL 映射唯一性）。应用工厂映射仅 `/api/login`(POST)、`/api/me`(GET)、`/api/classes/<class_id>/members`(GET) 三条业务路由，宿主只做 `register_blueprint`。
+
+**关闭前置未完成：** 本提交尚未 push、未合入集成分支、未做 code-review。按 `docs/development.md` 第 32 行，下游（13/15/23/12 等）需 01 的实现提交出现在共享基线后才解锁；需先推送分支并合入，再据评审结论复验本票。

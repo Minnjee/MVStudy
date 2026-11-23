@@ -1,4 +1,4 @@
-"""幂等的开发种子：两个班、三类角色、十个账号。
+"""幂等的开发种子：两个班、三类角色、十一个账号。
 
 用法（在 backend/ 目录下）：
     python -m mvstudy.domains.platform.seed
