@@ -3,7 +3,8 @@ Flask-Cors>=4,<6
 pyflakes>=3.4,<4
 openai-agents==0.25.0
 SQLAlchemy>=2.0,<3
-alembic>=1.13,<2
+alembic>=1.17,<2
 psycopg[binary]>=3.2,<4
 PyJWT>=2.9,<3
 python-dotenv>=1.0,<2
+pytest>=8.0,<9
